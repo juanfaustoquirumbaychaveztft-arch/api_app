@@ -1,5 +1,5 @@
 import app from './app.js'
 import{PORT} from './config.js'
 
-app.listen(PORT);//3000
+const port = process.env.PORT || PORT;
 console.log('el servidor esta escuchando por el puesto:',PORT)
