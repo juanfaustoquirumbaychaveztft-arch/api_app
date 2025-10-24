@@ -23,7 +23,7 @@ app.use('/api', pedidosRoutes);
 
 app.use((req,resp,next)=>{
     resp.status(400).json({
-        message:'Endpoint not fount'
+        message:'Bienvenido'
     })
 })
 
