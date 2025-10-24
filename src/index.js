@@ -1,5 +1,10 @@
 import app from './app.js'
-import{PORT} from './config.js'
+import { PORT } from './config.js'
 
-const port = process.env.PORT || PORT;
-console.log('el servidor esta escuchando por el puesto:',PORT)
+// Usa el puerto dinámico que da Railway o el definido localmente
+const port = process.env.PORT || PORT || 3000;
+
+// Inicia el servidor
+app.listen(port, () => {
+  console.log(`✅ El servidor está escuchando por el puerto: ${port}`);
+});
