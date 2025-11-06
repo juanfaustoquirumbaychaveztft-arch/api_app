@@ -6,6 +6,15 @@ import productosRoutes from './routes/productos.routes.js';
 import usuariosRoutes from './routes/usuarios.routes.js'; // esta linea se agrego 
 import pedidosRoutes from './routes/pedidos.routes.js';
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Servir archivos estáticos (imágenes subidas)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 const app=express();
 app.use(express.json());
 const corsOptions={
