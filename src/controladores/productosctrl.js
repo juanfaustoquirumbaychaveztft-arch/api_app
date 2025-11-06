@@ -33,55 +33,45 @@ export const getProductosxId=async(req,res)=>{
 }
 
 //funcion para insertar 
-export const postProducto=async(req,res)=>{
-    try {
-        const {prod_codigo,prod_nombre,prod_stock,prod_precio,prod_activo}=req.body;
-        const prod_imagen=req.file?`/uploads/${req.file.filename}`:null;
-        //console.log(req.body)
-        const [result]= await conmysql.query(
-        'insert into productos(prod_codigo,prod_nombre,prod_stock,prod_precio,prod_activo,prod_imagen) values(?,?,?,?,?,?)',
-        [prod_codigo,prod_nombre,prod_stock,prod_precio,prod_activo,prod_imagen]
-        )
-        res.send({prod_id:result.insertId}) 
-    } catch (error) {
-        return res.status(500).json({message:"ERROR EN EL SERVER !!!!"})
-    }
-}
+export const postProducto = async (req, res) => {
+  try {
+    const { prod_codigo, prod_nombre, prod_stock, prod_precio } = req.body;
+    const prod_activo = req.body.prod_activo === 'true' || req.body.prod_activo === '1' ? 1 : 0;
+    const imagen = req.file ? `/uploads/${req.file.filename}` : null;
+
+    const [result] = await conmysql.query(
+      'INSERT INTO productos (prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen) VALUES (?, ?, ?, ?, ?, ?)',
+      [prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, imagen]
+    );
+
+    res.json({ prod_id: result.insertId, mensaje: 'Producto agregado', prod_imagen: imagen });
+  } catch (error) {
+    console.error('Error en postProducto:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor', error });
+  }
+};
 
 //funcion para modificar 
-export const putProducto=async(req,res)=>{
-    try {
-        const{id}=req.params
-        const {prod_codigo,prod_nombre,prod_stock,prod_precio,prod_activo}=req.body;
-        let prod_imagen=req.file?`/uploads/${req.file.filename}`:null;
-        //console.log(req.body)
-        if  (!req.file){
-            const[rows]= await conmysql.query(
-                'SELECT prod_imagen FROM productos WHERE prod_id = ?',
-                [id]
-            );
-            //Si el producto existe,conservar su imagen actual
-            if(rows && rows.length > 0){
-                prod_imagen = rows[0].prod_imagen;
-            }else{
-                return res.status(404).json({message: 'PRODUCTO NO ENCONTRADO'})
-            }
-        }
-        const [result]= await conmysql.query(
-            'update productos set prod_codigo=?, prod_nombre=?, prod_stock=?, prod_precio=?, prod_activo=?, prod_imagen=? where prod_id=?',
-            [prod_codigo,prod_nombre,prod_stock,prod_precio,prod_activo,prod_imagen,id]
-        )
-        if(result.affectedRows<=0)return res.status(404).json({
-            message: "AHHHH PRODUCTO NO ENCONTRADO!!!!!!"
-        })
-        
-        const [fila]=await conmysql.query(' select * from productos where prod_id=?',[id])
-        res.json(fila[0])
-
-    } catch (error) {
-        return res.status(500).json({message:"ERROR EN EL SERVER !!!!"})
+export const putProducto = async (req, res) => {
+  try {
+    const { prod_codigo, prod_nombre, prod_stock, prod_precio } = req.body;
+    const prod_activo = req.body.prod_activo === 'true' || req.body.prod_activo === '1' ? 1 : 0;
+    let imagen = req.body.prod_imagen;
+    if (req.file) {
+      imagen = `/uploads/${req.file.filename}`;
     }
-}
+
+    await conmysql.query(
+      'UPDATE productos SET prod_codigo=?, prod_nombre=?, prod_stock=?, prod_precio=?, prod_activo=?, prod_imagen=? WHERE prod_id=?',
+      [prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, imagen, req.params.id]
+    );
+
+    res.json({ mensaje: 'Producto actualizado correctamente', prod_imagen: imagen });
+  } catch (error) {
+    console.error('Error en putProducto:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor', error });
+  }
+};
 
 //funcion para eliminar
 export const deleteProducto = async (req, res) => {
