@@ -93,6 +93,20 @@ export const deleteCliente = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: "ERROR EN EL SERVER !!!!" });
   }
+  
+};
+
+export const getClienteByIdentificacion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [rows] = await conmysql.query('SELECT * FROM clientes WHERE cli_identificacion = ?', [id]);
+    if (rows.length === 0)
+      return res.json({ data: null });
+    res.json({ data: rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener cliente' });
+  }
 };
 
 ///WLADIMIRM

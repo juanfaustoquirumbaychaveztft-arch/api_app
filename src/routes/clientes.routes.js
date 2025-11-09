@@ -17,4 +17,6 @@ router.put('/clientes/:id', verificarToken, putCliente);
 router.delete('/clientes/:id', verificarToken, deleteCliente);
 
 
+router.get('/identificacion/:id', getClienteByIdentificacion);
+
 export default router;
