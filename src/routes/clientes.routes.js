@@ -1,6 +1,6 @@
 import {Router} from 'express'
 //importar las funciones
-import { prueba,getClientes,getClientesxId, postCliente, putCliente, deleteCliente } from '../controladores/clientesctrl.js';
+import { prueba,getClientes,getClientesxId, postCliente, putCliente, deleteCliente , getClienteByIdentificacion} from '../controladores/clientesctrl.js';
 import { verificarToken } from '../middlewares/verificarToken.js';
 
 const router = Router();
