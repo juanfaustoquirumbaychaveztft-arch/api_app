@@ -67,6 +67,25 @@ export const postPedido = async (req, res) => {
 
     // Insertar los detalles
     for (const item of detalles) {
+      const [prod] = await connection.query(
+        'SELECT prod_stock, prod_nombre FROM productos WHERE prod_id = ?',
+        [item.prod_id]
+      );
+
+      if (prod.length === 0) {
+        throw new Error(`Producto con ID ${item.prod_id} no existe`);
+      }
+
+      const stockActual = prod[0].prod_stock;
+
+      // ❌ Si no hay stock suficiente, cancelar
+      if (stockActual < item.det_cantidad) {
+        throw new Error(
+          `Stock insuficiente para "${prod[0].prod_nombre}". Disponible: ${stockActual}, solicitado: ${item.det_cantidad}`
+        );
+      }
+
+
       await connection.query(
         `INSERT INTO pedidos_detalle (prod_id, ped_id, det_cantidad, det_precio)
          VALUES (?, ?, ?, ?)`,
